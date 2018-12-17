@@ -13,7 +13,7 @@ open class GPIO(val config: RelayConfig) {
     init {
         if (config.enabled) {
             gpio = GpioFactory.getInstance()
-            pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_17, "Relay", PinState.LOW)
+            pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "Relay", PinState.LOW)
             pin.setShutdownOptions(true, PinState.LOW)
         }
     }
