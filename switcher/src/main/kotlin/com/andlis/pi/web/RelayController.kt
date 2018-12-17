@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping
 @Controller
 open class RelayController(val relay: Relay) {
 
-    @GetMapping("/relay")
+    @GetMapping(value = *["/", "/switch"])
     fun getRelayControll(model: Model): String {
         model.addAttribute("relay", relay)
         return "relay"
     }
 
-    @PostMapping("/relay/switch")
+    @PostMapping("/switch")
     fun switchRelay(model: Model): String {
         relay.switch()
         model.addAttribute("state", relay.getState())

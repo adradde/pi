@@ -13,10 +13,12 @@ open class GPIO(val config: RelayConfig) {
     init {
         if (config.enabled) {
             gpio = GpioFactory.getInstance()
-            pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "Relay", PinState.LOW)
+            pin = gpio.provisionDigitalOutputPin(getPinNumber(), "Relay", PinState.LOW)
             pin.setShutdownOptions(true, PinState.LOW)
         }
     }
+
+    private fun getPinNumber(): Pin = RaspiPin.getPinByAddress(config.sourcePin) ?: throw IllegalAccessException("Cant initialize pin with address: ${config.sourcePin}")
 
     @PreDestroy
     private fun shutdown() {
