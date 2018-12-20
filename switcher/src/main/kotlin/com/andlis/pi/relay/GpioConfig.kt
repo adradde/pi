@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConfigurationProperties(prefix = "relay")
-class RelayConfig {
-    var sourcePin: Int = 11
+class GpioConfig {
+    var relayPin: Int = 0
+    var speakerPin: Int = 0
     var enabled: Boolean = false
 }

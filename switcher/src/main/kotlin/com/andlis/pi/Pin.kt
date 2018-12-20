@@ -1,24 +1,30 @@
 package com.andlis.pi
 
-import com.andlis.pi.relay.RelayConfig
+import com.andlis.pi.relay.GpioConfig
 import com.pi4j.io.gpio.*
 import org.springframework.stereotype.Component
 import javax.annotation.PreDestroy
 
 @Component
-open class GPIO(val config: RelayConfig) {
+open class GPIO(val config: GpioConfig) {
     private lateinit var gpio: GpioController
-    private lateinit var pin: GpioPinDigitalOutput
+    private lateinit var relayPin: GpioPinDigitalOutput
+    private lateinit var speakerPin: GpioPinDigitalOutput
 
     init {
         if (config.enabled) {
             gpio = GpioFactory.getInstance()
-            pin = gpio.provisionDigitalOutputPin(getPinNumber(), "Relay", PinState.LOW)
-            pin.setShutdownOptions(true, PinState.LOW)
+            speakerPin = gpio.provisionDigitalOutputPin(getRelayPinNumber(config.speakerPin), "Relay", PinState.LOW)
+            relayPin = gpio.provisionDigitalOutputPin(getRelayPinNumber(config.relayPin), "Relay", PinState.LOW)
+            relayPin.setShutdownOptions(true, PinState.LOW)
         }
     }
 
-    private fun getPinNumber(): Pin = RaspiPin.getPinByAddress(config.sourcePin) ?: throw IllegalAccessException("Cant initialize pin with address: ${config.sourcePin}")
+    fun startUp() {
+        speakerPin.blink(300, 2000)
+    }
+
+    private fun getRelayPinNumber(pinNumber: Int): Pin = RaspiPin.getPinByAddress(pinNumber) ?: throw IllegalAccessException("Cant initialize pin with address: $pinNumber")
 
     @PreDestroy
     private fun shutdown() {
@@ -29,19 +35,19 @@ open class GPIO(val config: RelayConfig) {
 
     fun high() {
         if (config.enabled) {
-            pin.high()
+            relayPin.high()
         }
     }
 
     fun low() {
         if (config.enabled) {
-            pin.low()
+            relayPin.low()
         }
     }
 
     fun toggle() {
         if (config.enabled) {
-            pin.toggle()
+            relayPin.toggle()
         }
     }
 }

@@ -4,12 +4,15 @@ import com.andlis.pi.GPIO
 import com.andlis.pi.relay.State.OFF
 import com.andlis.pi.relay.State.ON
 import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
 
 @Component
-open class DefaultRelay(val config: RelayConfig, val gpio: GPIO) : PinnedRelay(config) {
+open class DefaultRelay(val config: GpioConfig, val gpio: GPIO) : PinnedRelay(config) {
 
     private var state: State = OFF
 
+    @PostConstruct
+    private fun startUp() = gpio.startUp()
 
     override fun turnOn(): State = state.also { this.state = ON; gpio.high() }
 
